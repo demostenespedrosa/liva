@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // catch-all deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Auth tokens can verify identity. For high security, we enforce email verification
+    // if requested, but given standard popup/trial oauth flows, we stick to UID.
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Validate psychology payload
+    function isValidPsychologist(data) {
+      return data.id is string
+        && data.name is string && data.name.size() <= 100
+        && data.phone is string && data.phone.size() <= 30
+        && data.tags is list
+        && data.is_public is bool;
+    }
+
+    // Validate Patient payload
+    function isValidPatient(data) {
+      return data.id is string
+        && data.psychologist_id is string
+        && data.name is string && data.name.size() <= 100;
+    }
+
+    // Validate Appointment payload
+    function isValidAppointment(data) {
+      return data.id is string
+        && data.psychologist_id is string
+        && data.patient_id is string
+        && data.starts_at is string
+        && data.ends_at is string;
+    }
+
+    // Validate Clinical Record payload
+    function isValidClinicalRecord(data) {
+      return data.id is string
+        && data.psychologist_id is string
+        && data.patient_id is string
+        && data.encrypted_content is string;
+    }
+
+    match /psychologists/{psychologistId} {
+      allow get: if true; // Public profiles are gettable
+      allow list: if resource.data.is_public == true; // Only list if public
+      allow create: if isOwner(psychologistId) && isValidPsychologist(request.resource.data);
+      allow update: if isOwner(psychologistId) && isValidPsychologist(request.resource.data)
+                    && request.resource.data.id == resource.data.id; // immutable ID
+      allow delete: if isOwner(psychologistId);
+    }
+
+    match /patients/{patientId} {
+      allow get: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.psychologist_id == request.auth.uid && isValidPatient(request.resource.data);
+      allow update: if isSignedIn() && resource.data.psychologist_id == request.auth.uid 
+                    && request.resource.data.psychologist_id == request.auth.uid 
+                    && isValidPatient(request.resource.data);
+      allow delete: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+    }
+
+    match /appointments/{appointmentId} {
+      allow get: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.psychologist_id == request.auth.uid && isValidAppointment(request.resource.data);
+      allow update: if isSignedIn() && resource.data.psychologist_id == request.auth.uid 
+                    && request.resource.data.psychologist_id == request.auth.uid 
+                    && isValidAppointment(request.resource.data);
+      allow delete: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+    }
+
+    match /clinical_records/{recordId} {
+      allow get: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.psychologist_id == request.auth.uid && isValidClinicalRecord(request.resource.data);
+      allow update: if isSignedIn() && resource.data.psychologist_id == request.auth.uid 
+                    && request.resource.data.psychologist_id == request.auth.uid 
+                    && isValidClinicalRecord(request.resource.data);
+      allow delete: if isSignedIn() && resource.data.psychologist_id == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Liva",
+  "description": "Progressive Web App que conecta pacientes a psicólogos através de uma triagem de dores emocionais humanizada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "psychologist": {
+      "title": "Psychologist",
+      "description": "A professional therapist profile on the platform",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique user ID matching the psychologist's auth UID" },
+        "name": { "type": "string", "description": "The psychologist's display name" },
+        "bio": { "type": "string", "description": "Professional bio" },
+        "focus": { "type": "string", "description": "Primary clinical focus statement" },
+        "photoUrl": { "type": "string", "description": "URL of the professional photo" },
+        "phone": { "type": "string", "description": "WhatsApp or contact number" },
+        "tags": { "type": "array", "description": "List of specialization keywords" },
+        "stripe_customer_id": { "type": "string", "description": "Stripe Customer ID for billing" },
+        "subscription_status": { "type": "string", "description": "Subscription status (active, trialing, canceled)" },
+        "is_public": { "type": "boolean", "description": "Whether the profile is visible in the public matchmaking directory" }
+      },
+      "required": ["id", "name", "phone", "tags", "is_public"]
+    },
+    "patient": {
+      "title": "Patient",
+      "description": "A patient managed under a therapist's care",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique patient ID" },
+        "psychologist_id": { "type": "string", "description": "UID of the managing psychologist" },
+        "name": { "type": "string", "description": "Full name of the patient" },
+        "email": { "type": "string", "description": "Patient's email address" },
+        "phone": { "type": "string", "description": "Patient's phone number" },
+        "date_of_birth": { "type": "string", "description": "Date of birth (ISO string)" },
+        "created_at": { "type": "string", "description": "Record creation timestamp" }
+      },
+      "required": ["id", "psychologist_id", "name"]
+    },
+    "appointment": {
+      "title": "Appointment",
+      "description": "A scheduled therapy session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique appointment ID" },
+        "psychologist_id": { "type": "string", "description": "UID of the psychologist" },
+        "patient_id": { "type": "string", "description": "Id of the patient" },
+        "title": { "type": "string", "description": "Title of the appointment" },
+        "starts_at": { "type": "string", "description": "Start timestamp (ISO)" },
+        "ends_at": { "type": "string", "description": "End timestamp (ISO)" },
+        "status": { "type": "string", "description": "scheduled, completed, canceled" },
+        "created_at": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "psychologist_id", "patient_id", "starts_at", "ends_at"]
+    },
+    "clinical_record": {
+      "title": "Clinical Record",
+      "description": "AES-256 encrypted Clinical Record PEP evolution note",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique record ID" },
+        "psychologist_id": { "type": "string", "description": "UID of the owner psychologist (RLS owner)" },
+        "patient_id": { "type": "string", "description": "ID of the corresponding patient" },
+        "appointment_id": { "type": "string", "description": "Optional reference to appointment ID" },
+        "encrypted_content": { "type": "string", "description": "Note content encrypted with AES-256 at the client application layer" },
+        "created_at": { "type": "string", "description": "Creation timestamp" },
+        "updated_at": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["id", "psychologist_id", "patient_id", "encrypted_content"]
+    }
+  },
+  "firestore": {
+    "/psychologists/{psychologistId}": {
+      "schema": { "$ref": "#/entities/psychologist" },
+      "description": "Psychologist clinical profiles public and private fields"
+    },
+    "/patients/{patientId}": {
+      "schema": { "$ref": "#/entities/patient" },
+      "description": "Patients registered under specific psychologists"
+    },
+    "/appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/appointment" },
+      "description": "Scheduled appointments"
+    },
+    "/clinical_records/{recordId}": {
+      "schema": { "$ref": "#/entities/clinical_record" },
+      "description": "Sensitive, encrypted patient clinical record files"
+    }
+  }
+}
