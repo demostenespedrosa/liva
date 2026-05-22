@@ -18,6 +18,7 @@ import { Agenda } from './admin/Agenda';
 import { PatientsList } from './admin/PatientsList';
 import { ClinicalRecords } from './admin/ClinicalRecords';
 import { Settings } from './admin/Settings';
+import { VirtualOffice } from './admin/VirtualOffice';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './lib/firebase';
@@ -130,6 +131,9 @@ export default function App() {
           <Route path="records/:patientId?" element={<ClinicalRecords />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+        
+        {/* Liva Pro - Assured Fullscreen Immersive Virtual Office */}
+        <Route path="/pro/virtual-office" element={<VirtualOffice />} />
         
         {/* Legacy admin redirect (optional) */}
         <Route path="/admin/*" element={<Navigate to="/pro" replace />} />
