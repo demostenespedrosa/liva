@@ -59,7 +59,7 @@ export const PatientsList: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-3">
                       <Link 
-                        to={`/admin/records/${patient.id}`} 
+                        to={`/pro/records/${patient.id}`} 
                         className="text-brand-600 hover:text-brand-900 flex items-center gap-1 bg-brand-50 px-3 py-1.5 rounded-lg transition-colors text-xs font-medium"
                       >
                         <FileText className="w-3.5 h-3.5" />

@@ -27,9 +27,9 @@ export const PatientLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center font-sans">
+    <div className="h-[100dvh] bg-gray-50 flex items-center justify-center font-sans">
       {/* Mobile Frame Container */}
-      <div className="w-full max-w-md mx-auto bg-[#FDFBF7] h-[100dvh] md:h-[90vh] md:min-h-[800px] md:rounded-[3rem] md:shadow-2xl md:border-8 border-white overflow-hidden relative flex flex-col">
+      <div className="w-full max-w-md mx-auto bg-[#FDFBF7] h-full flex flex-col relative md:h-[90vh] md:min-h-[800px] md:rounded-[3rem] md:shadow-2xl md:border-8 border-white md:overflow-hidden">
         
         {/* Dynamic Content Area */}
         <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
@@ -44,7 +44,7 @@ export const PatientLayout: React.FC = () => {
         <PwaInstallPrompt />
 
         {/* Bottom Navigation */}
-        <nav className="absolute inset-x-0 bottom-0 bg-white border-t border-brand-100/50 md:rounded-b-[2.5rem] pb-safe z-50">
+        <nav className="fixed md:absolute inset-x-0 bottom-0 w-full max-w-md mx-auto bg-white border-t border-brand-100/50 md:rounded-b-[2.5rem] pb-safe z-50">
           <div className="flex items-center justify-around px-6 pt-4 pb-6">
             <button onClick={() => navigate('/app')} className={getTabClass('/app')}>
               <Home className={getIconClass('/app')} />

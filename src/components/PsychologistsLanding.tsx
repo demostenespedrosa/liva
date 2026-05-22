@@ -59,14 +59,14 @@ export const PsychologistsLanding: React.FC<PsychologistsLandingProps> = ({ onBa
           
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
             <Link 
-              to="/admin/settings"
+              to="/pro/settings"
               className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-500 text-white rounded-full font-medium text-lg overflow-hidden transition-all hover:bg-brand-600 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 text-center"
             >
               <span>Começar Trial Gratuito (30 dias)</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link 
-              to="/admin"
+              to="/pro"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-700 border border-gray-200 rounded-full font-medium hover:bg-gray-50 transition-colors text-lg text-center"
             >
               Acessar Painel Liva Pro
@@ -185,7 +185,7 @@ export const PsychologistsLanding: React.FC<PsychologistsLandingProps> = ({ onBa
             Faça parte de um ecossistema comprometido com a dignidade psicológica e o desenvolvimento permanente da profissão.
           </p>
           <Link 
-            to="/admin/settings"
+            to="/pro/settings"
             className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-brand-900 rounded-full font-medium text-lg overflow-hidden transition-all hover:bg-gray-100 hover:shadow-lg active:translate-y-0 text-center"
           >
             <span>Experimentar sem compromisso</span>
@@ -196,7 +196,7 @@ export const PsychologistsLanding: React.FC<PsychologistsLandingProps> = ({ onBa
         <div className="border-t border-brand-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-brand-100 max-w-5xl mx-auto w-full text-opacity-60">
           <p>© {new Date().getFullYear()} Liva | Todos os direitos reservados. Conectando pessoas a psicólogos éticos e comprometidos.</p>
           <div className="flex items-center gap-4">
-            <Link to="/admin" className="hover:text-white transition-colors">Acessar Painel do Terapeuta</Link>
+            <Link to="/pro" className="hover:text-white transition-colors">Acessar Painel do Terapeuta</Link>
             <span className="w-1 h-1 rounded-full bg-brand-800"></span>
             <span className="text-white hover:cursor-pointer hover:text-white transition-colors" onClick={onBackToPatients}>Voltar ao Atendimento de Pacientes</span>
           </div>

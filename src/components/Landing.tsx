@@ -132,7 +132,7 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
           <div className="flex items-center gap-4">
             <a href="#" className="hover:text-white transition-colors">Política de Privacidade</a>
             <span className="w-1 h-1 rounded-full bg-brand-800"></span>
-            <a href="/admin" className="hover:text-white transition-colors">Acesso para Psicólogos Assinantes</a>
+            <a href="/pro" className="hover:text-white transition-colors">Acesso para Psicólogos Assinantes</a>
           </div>
         </div>
       </section>
