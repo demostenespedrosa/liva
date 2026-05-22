@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Leaf, ArrowRight, Mail, Lock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
@@ -13,8 +13,34 @@ export const AuthScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          let role = 'patient';
+          if (userDoc.exists()) {
+            role = userDoc.data().role || 'patient';
+          }
+          if (role === 'pro') navigate('/pro');
+          else if (role === 'corporate') navigate('/corporate');
+          else if (role === 'admin') navigate('/superadmin');
+          else navigate('/app');
+        } catch (e) {
+          console.error(e);
+          setInitializing(false);
+        }
+      } else {
+        setInitializing(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,29 +58,24 @@ export const AuthScreen: React.FC = () => {
           role: 'patient',
           created_at: new Date().toISOString()
         });
-        navigate('/app');
+        // The onAuthStateChanged listener might catch the redirect, but we can leave it here as well or just let the redirect happen.
       } else {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        
-        let role = 'patient';
-        if (userDoc.exists()) {
-          role = userDoc.data().role || 'patient';
-        }
-        
-        if (role === 'pro') navigate('/pro');
-        else if (role === 'corporate') navigate('/corporate');
-        else if (role === 'admin') navigate('/superadmin');
-        else navigate('/app');
+        await signInWithEmailAndPassword(auth, email, password);
       }
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message || 'Ocorreu um erro.');
-    } finally {
       setLoading(false);
     }
   };
+
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-brand-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 font-sans">

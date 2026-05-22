@@ -5,6 +5,7 @@ import { PatientHome } from './PatientHome';
 import { PatientTrails } from './PatientTrails';
 import { PatientDiary } from './PatientDiary';
 import { PatientProfile } from './PatientProfile';
+import { PwaInstallPrompt } from './PwaInstallPrompt';
 
 export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -39,6 +40,8 @@ export const PatientLayout: React.FC = () => {
             <Route path="profile" element={<PatientProfile />} />
           </Routes>
         </div>
+
+        <PwaInstallPrompt />
 
         {/* Bottom Navigation */}
         <nav className="absolute inset-x-0 bottom-0 bg-white border-t border-brand-100/50 md:rounded-b-[2.5rem] pb-safe z-50">

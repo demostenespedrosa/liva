@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Landing } from './components/Landing';
 import { CompaniesLanding } from './components/CompaniesLanding';
@@ -18,6 +18,9 @@ import { Agenda } from './admin/Agenda';
 import { PatientsList } from './admin/PatientsList';
 import { ClinicalRecords } from './admin/ClinicalRecords';
 import { Settings } from './admin/Settings';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from './lib/firebase';
 
 type AppState = 'landing' | 'wizard' | 'results';
 type LandingTab = 'patients' | 'companies' | 'psychologists';
@@ -27,6 +30,29 @@ const PatientFlow: React.FC = () => {
   const [landingTab, setLandingTab] = useState<LandingTab>('patients');
   const [matches, setMatches] = useState<Psychologist[]>([]);
   const [primaryIssueId, setPrimaryIssueId] = useState<string>('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          let role = 'patient';
+          if (userDoc.exists()) {
+            role = userDoc.data().role || 'patient';
+          }
+          if (role === 'pro') navigate('/pro');
+          else if (role === 'corporate') navigate('/corporate');
+          else if (role === 'admin') navigate('/superadmin');
+          else navigate('/app');
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleWizardComplete = (foundMatches: Psychologist[], issueId: string) => {
     setMatches(foundMatches);
