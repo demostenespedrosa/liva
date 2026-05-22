@@ -1,33 +1,60 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Leaf, ArrowRight, Mail, Lock, LogIn, Heart, Building2, Stethoscope, ShieldCheck } from 'lucide-react';
+import { Leaf, ArrowRight, Mail, Lock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 
 type AuthMode = 'login' | 'register';
-type Role = 'patient' | 'corporate' | 'pro' | 'admin';
 
 export const AuthScreen: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
-  const [selectedRole, setSelectedRole] = useState<Role>('patient');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const handleAuth = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate Auth
-    if (selectedRole === 'patient') navigate('/app');
-    else if (selectedRole === 'corporate') navigate('/corporate');
-    else if (selectedRole === 'pro') navigate('/pro');
-    else if (selectedRole === 'admin') navigate('/superadmin');
+    setLoading(true);
+    setErrorMsg('');
+    
+    try {
+      if (mode === 'register') {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        // User registers automatically as "patient".
+        await setDoc(doc(db, 'users', user.uid), {
+          id: user.uid,
+          email: user.email,
+          role: 'patient',
+          created_at: new Date().toISOString()
+        });
+        navigate('/app');
+      } else {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        
+        let role = 'patient';
+        if (userDoc.exists()) {
+          role = userDoc.data().role || 'patient';
+        }
+        
+        if (role === 'pro') navigate('/pro');
+        else if (role === 'corporate') navigate('/corporate');
+        else if (role === 'admin') navigate('/superadmin');
+        else navigate('/app');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || 'Ocorreu um erro.');
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const roles = [
-    { id: 'patient', label: 'Sou Paciente', icon: Heart, desc: 'Acessar trilhas de bem-estar e consultas' },
-    { id: 'corporate', label: 'Empresa / RH', icon: Building2, desc: 'Acessar painel de BI e saúde do time' },
-    { id: 'pro', label: 'Sou Profissional', icon: Stethoscope, desc: 'Gerenciar agenda e prontuários' },
-    { id: 'admin', label: 'Administrador', icon: ShieldCheck, desc: 'Gestão da plataforma base', hidden: mode === 'register' },
-  ];
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 font-sans">
@@ -96,22 +123,11 @@ export const AuthScreen: React.FC = () => {
 
             <form onSubmit={handleAuth} className="space-y-6">
               
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">Como você deseja acessar?</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {roles.filter(r => !r.hidden).map((role) => (
-                    <div 
-                      key={role.id}
-                      onClick={() => setSelectedRole(role.id as Role)}
-                      className={`cursor-pointer p-4 rounded-2xl border ${selectedRole === role.id ? 'border-brand-500 bg-brand-50/50' : 'border-gray-200 bg-white hover:border-brand-200 hover:bg-gray-50/50'} transition-all`}
-                    >
-                      <role.icon className={`w-5 h-5 mb-2 ${selectedRole === role.id ? 'text-brand-600' : 'text-gray-400'}`} />
-                      <h4 className={`text-sm font-semibold ${selectedRole === role.id ? 'text-brand-900' : 'text-gray-700'}`}>{role.label}</h4>
-                      <p className={`text-xs mt-1 leading-tight ${selectedRole === role.id ? 'text-brand-600/80' : 'text-gray-500'}`}>{role.desc}</p>
-                    </div>
-                  ))}
+              {errorMsg && (
+                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg">
+                  {errorMsg}
                 </div>
-              </div>
+              )}
 
               <div className="space-y-4 pt-2">
                 <div>
@@ -150,10 +166,17 @@ export const AuthScreen: React.FC = () => {
 
               <button 
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 py-3.5 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 transition-colors shadow-md mt-6 group"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 transition-colors shadow-md mt-6 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <span>{mode === 'login' ? 'Entrar no Liva' : 'Criar minha conta'}</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <span>{mode === 'login' ? 'Entrar no Liva' : 'Criar minha conta'}</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
               </button>
             </form>
 

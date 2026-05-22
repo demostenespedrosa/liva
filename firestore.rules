@@ -55,6 +55,18 @@ service cloud.firestore {
         && data.encrypted_content is string;
     }
 
+    // Validate User payload
+    function isValidUser(data) {
+      return data.id is string
+        && (data.role == 'patient' || data.role == 'corporate' || data.role == 'admin' || data.role == 'pro');
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && request.resource.data.id == resource.data.id;
+    }
+
     match /psychologists/{psychologistId} {
       allow get: if true; // Public profiles are gettable
       allow list: if resource.data.is_public == true; // Only list if public

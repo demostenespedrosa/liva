@@ -7,7 +7,7 @@ import { PsychologistsLanding } from './components/PsychologistsLanding';
 import { Wizard } from './components/Wizard';
 import { Recommendations } from './components/Recommendations';
 import { AuthScreen } from './components/Auth';
-import { PatientDashboard } from './components/PatientDashboard';
+import { PatientLayout } from './components/patient/PatientLayout';
 import { CorporateDashboard } from './components/CorporateDashboard';
 import { SuperAdminDashboard } from './components/SuperAdminDashboard';
 import { Psychologist } from './types';
@@ -88,7 +88,7 @@ export default function App() {
         <Route path="/auth" element={<AuthScreen />} />
         
         {/* Liva App (Patients) */}
-        <Route path="/app/*" element={<PatientDashboard />} />
+        <Route path="/app/*" element={<PatientLayout />} />
         
         {/* Liva Corporate (HR) */}
         <Route path="/corporate/*" element={<CorporateDashboard />} />
