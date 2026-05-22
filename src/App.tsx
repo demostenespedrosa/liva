@@ -6,6 +6,10 @@ import { CompaniesLanding } from './components/CompaniesLanding';
 import { PsychologistsLanding } from './components/PsychologistsLanding';
 import { Wizard } from './components/Wizard';
 import { Recommendations } from './components/Recommendations';
+import { AuthScreen } from './components/Auth';
+import { PatientDashboard } from './components/PatientDashboard';
+import { CorporateDashboard } from './components/CorporateDashboard';
+import { SuperAdminDashboard } from './components/SuperAdminDashboard';
 import { Psychologist } from './types';
 import { AnimatePresence } from 'motion/react';
 import { AdminLayout } from './admin/AdminLayout';
@@ -76,21 +80,33 @@ const PatientFlow: React.FC = () => {
   );
 };
 
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<PatientFlow />} />
+        <Route path="/auth" element={<AuthScreen />} />
         
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Liva App (Patients) */}
+        <Route path="/app/*" element={<PatientDashboard />} />
+        
+        {/* Liva Corporate (HR) */}
+        <Route path="/corporate/*" element={<CorporateDashboard />} />
+        
+        {/* Liva Admin (Super Admin) */}
+        <Route path="/superadmin/*" element={<SuperAdminDashboard />} />
+
+        {/* Liva Pro (Psychologist - Admin Routes) */}
+        <Route path="/pro" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="patients" element={<PatientsList />} />
           <Route path="records/:patientId?" element={<ClinicalRecords />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+        
+        {/* Legacy admin redirect (optional) */}
+        <Route path="/admin/*" element={<Navigate to="/pro" replace />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,5 +1,6 @@
 import React from "react";
-import { Leaf } from "lucide-react";
+import { Leaf, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   activeTab: 'patients' | 'companies' | 'psychologists';
@@ -8,9 +9,9 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ activeTab, onChangeTab }) => {
   return (
-    <header className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-100/50 md:border-b-0">
+    <header className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-100/50 md:border-b-0">
       <div 
-        className="flex items-center gap-2 text-brand-600 hover:opacity-85 cursor-pointer" 
+        className="flex items-center gap-2 text-brand-600 hover:opacity-85 cursor-pointer md:w-1/4" 
         onClick={() => onChangeTab('patients')}
       >
         <Leaf className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -49,6 +50,16 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onChangeTab }) => {
           Para Psicólogos
         </button>
       </nav>
+
+      <div className="flex items-center justify-end md:w-1/4">
+        <Link 
+          to="/auth"
+          className="flex items-center gap-2 px-5 py-2.5 bg-brand-900 text-white rounded-full text-xs font-semibold hover:bg-brand-600 transition-colors shadow-sm"
+        >
+          <LogIn className="w-3.5 h-3.5" />
+          <span>Acessar</span>
+        </Link>
+      </div>
     </header>
   );
 }
