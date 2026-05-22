@@ -29,7 +29,7 @@ export const PatientLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center font-sans">
       {/* Mobile Frame Container */}
-      <div className="w-full max-w-md mx-auto bg-[#FDFBF7] min-h-screen md:min-h-[850px] md:h-[90vh] md:rounded-[3rem] md:shadow-2xl md:border-8 border-white md:overflow-hidden relative flex flex-col">
+      <div className="w-full max-w-md mx-auto bg-[#FDFBF7] h-[100dvh] md:h-[90vh] md:min-h-[800px] md:rounded-[3rem] md:shadow-2xl md:border-8 border-white overflow-hidden relative flex flex-col">
         
         {/* Dynamic Content Area */}
         <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
