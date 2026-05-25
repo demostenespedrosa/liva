@@ -7,7 +7,7 @@ export const PatientTherapy: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex-1 flex flex-col pt-12 relative h-full">
+    <div className="flex-1 flex flex-col pt-12 relative">
       <header className="px-6 pb-6 border-b border-brand-100/50 bg-white sticky top-0 z-10">
         <motion.h1 
           initial={{ opacity: 0, y: 10 }}
@@ -18,7 +18,7 @@ export const PatientTherapy: React.FC = () => {
         </motion.h1>
       </header>
 
-      <main className="px-6 py-8 space-y-8 overflow-y-auto no-scrollbar flex-1 pb-32">
+      <main className="px-6 py-8 space-y-8 flex-1 pb-32">
         
         {/* Next Session */}
         <section>

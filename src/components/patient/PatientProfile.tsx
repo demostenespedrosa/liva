@@ -38,7 +38,7 @@ export const PatientProfile: React.FC = () => {
         </motion.div>
       </header>
 
-      <main className="px-6 space-y-6 overflow-y-auto no-scrollbar pb-32">
+      <main className="px-6 space-y-6 pb-32">
          
          {/* Espaço Corporativo / Benefício */}
          <motion.section

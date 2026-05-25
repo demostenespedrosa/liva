@@ -17,7 +17,7 @@ export const PatientCare: React.FC = () => {
         </motion.h1>
       </header>
 
-      <main className="px-6 py-8 space-y-8 no-scrollbar">
+      <main className="px-6 py-8 space-y-8 no-scrollbar pb-32">
 
         {/* Farmácia Virtual / Lembrete de Medicação */}
         <section>

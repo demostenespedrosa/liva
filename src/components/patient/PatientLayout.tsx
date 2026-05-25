@@ -33,7 +33,7 @@ export const PatientLayout: React.FC = () => {
       <div className="w-full max-w-md mx-auto bg-[#FDFBF7] h-full flex flex-col relative md:h-[90vh] md:min-h-[800px] md:rounded-[3rem] md:shadow-2xl md:border-8 border-white md:overflow-hidden">
         
         {/* Dynamic Content Area */}
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-y-auto no-scrollbar relative">
           <Routes>
             <Route index element={<PatientHome />} />
             <Route path="care" element={<PatientCare />} />
