@@ -1,11 +1,12 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Compass, BookHeart, User } from 'lucide-react';
+import { Home, HeartPulse, HeartHandshake, User } from 'lucide-react';
 import { PatientHome } from './PatientHome';
-import { PatientTrails } from './PatientTrails';
-import { PatientDiary } from './PatientDiary';
+import { PatientCare } from './PatientCare';
+import { PatientTherapy } from './PatientTherapy';
 import { PatientProfile } from './PatientProfile';
 import { PwaInstallPrompt } from './PwaInstallPrompt';
+import { CrisisProtocol } from './CrisisProtocol';
 
 export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -27,43 +28,46 @@ export const PatientLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-[100dvh] bg-gray-50 flex items-center justify-center font-sans">
+    <div className="h-[100dvh] bg-gray-50 flex items-center justify-center font-sans overflow-hidden">
       {/* Mobile Frame Container */}
       <div className="w-full max-w-md mx-auto bg-[#FDFBF7] h-full flex flex-col relative md:h-[90vh] md:min-h-[800px] md:rounded-[3rem] md:shadow-2xl md:border-8 border-white md:overflow-hidden">
         
         {/* Dynamic Content Area */}
-        <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+        <div className="flex-1 overflow-hidden relative">
           <Routes>
             <Route index element={<PatientHome />} />
-            <Route path="trails" element={<PatientTrails />} />
-            <Route path="diary" element={<PatientDiary />} />
+            <Route path="care" element={<PatientCare />} />
+            <Route path="therapy" element={<PatientTherapy />} />
             <Route path="profile" element={<PatientProfile />} />
+            <Route path="crisis" element={<CrisisProtocol />} />
           </Routes>
         </div>
 
         <PwaInstallPrompt />
 
         {/* Bottom Navigation */}
-        <nav className="fixed md:absolute inset-x-0 bottom-0 w-full max-w-md mx-auto bg-white border-t border-brand-100/50 md:rounded-b-[2.5rem] pb-safe z-50">
-          <div className="flex items-center justify-around px-6 pt-4 pb-6">
-            <button onClick={() => navigate('/app')} className={getTabClass('/app')}>
-              <Home className={getIconClass('/app')} />
-              <span className={getLabelClass('/app')}>Início</span>
-            </button>
-            <button onClick={() => navigate('/app/trails')} className={getTabClass('/app/trails')}>
-              <Compass className={getIconClass('/app/trails')} />
-              <span className={getLabelClass('/app/trails')}>Trilhas</span>
-            </button>
-            <button onClick={() => navigate('/app/diary')} className={getTabClass('/app/diary')}>
-              <BookHeart className={getIconClass('/app/diary')} />
-              <span className={getLabelClass('/app/diary')}>Diário</span>
-            </button>
-            <button onClick={() => navigate('/app/profile')} className={getTabClass('/app/profile')}>
-              <User className={getIconClass('/app/profile')} />
-              <span className={getLabelClass('/app/profile')}>Perfil</span>
-            </button>
-          </div>
-        </nav>
+        {location.pathname !== '/app/crisis' && (
+           <nav className="absolute inset-x-0 bottom-0 w-full bg-white border-t border-brand-100/50 pb-safe z-50">
+             <div className="flex items-center justify-around px-6 pt-3 pb-5">
+               <button onClick={() => navigate('/app')} className={getTabClass('/app')}>
+                 <Home className={getIconClass('/app')} />
+                 <span className={getLabelClass('/app')}>Início</span>
+               </button>
+               <button onClick={() => navigate('/app/care')} className={getTabClass('/app/care')}>
+                 <HeartPulse className={getIconClass('/app/care')} />
+                 <span className={getLabelClass('/app/care')}>Cuidado</span>
+               </button>
+               <button onClick={() => navigate('/app/therapy')} className={getTabClass('/app/therapy')}>
+                 <HeartHandshake className={getIconClass('/app/therapy')} />
+                 <span className={getLabelClass('/app/therapy')}>Terapia</span>
+               </button>
+               <button onClick={() => navigate('/app/profile')} className={getTabClass('/app/profile')}>
+                 <User className={getIconClass('/app/profile')} />
+                 <span className={getLabelClass('/app/profile')}>Perfil</span>
+               </button>
+             </div>
+           </nav>
+        )}
         
       </div>
     </div>
