@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Pill, Wind, Play, CheckCircle2, ChevronRight, Check } from 'lucide-react';
+import { Pill, Wind, Play, CheckCircle2, ChevronRight, Check, Sun } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 
 export const PatientCare: React.FC = () => {
   const [medTaken, setMedTaken] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="flex-1 flex flex-col pt-12">
@@ -74,19 +76,22 @@ export const PatientCare: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-             <div className="relative overflow-hidden bg-brand-900 text-white p-6 rounded-[2rem] shadow-sm cursor-pointer group">
+             <div 
+               onClick={() => navigate('/app/amanhecer')}
+               className="relative overflow-hidden bg-brand-900 text-white p-6 rounded-[2rem] shadow-sm cursor-pointer group"
+             >
                <div className="absolute top-0 right-0 w-48 h-48 bg-brand-800 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 z-0"></div>
                
                <div className="relative z-10 flex items-start gap-4">
                  <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex-shrink-0 flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-colors">
-                   <Wind className="w-6 h-6 text-brand-100" />
+                   <Sun className="w-6 h-6 text-orange-200" />
                  </div>
                  <div>
                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/10 backdrop-blur-sm text-[10px] font-medium text-brand-100 mb-2 border border-white/5">
-                     <Play className="w-3 h-3 fill-brand-100" /> 5 MINUTOS
+                     <Play className="w-3 h-3 fill-brand-100" /> TEMPORIZADOR SUTIL
                    </div>
-                   <h3 className="text-base font-medium leading-tight mb-1">Respiração Diafragmática</h3>
-                   <p className="text-xs text-brand-100/80 line-clamp-2">Acalme o sistema nervoso em momentos de crise ou estresse elevado.</p>
+                   <h3 className="text-base font-medium leading-tight mb-1">Amanhecer (Foco e Presença)</h3>
+                   <p className="text-xs text-brand-100/80 line-clamp-2">Uma pausa visual guiada por luz, sem a pressão dos números.</p>
                  </div>
                </div>
              </div>

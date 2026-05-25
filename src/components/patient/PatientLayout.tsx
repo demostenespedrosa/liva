@@ -7,6 +7,7 @@ import { PatientTherapy } from './PatientTherapy';
 import { PatientProfile } from './PatientProfile';
 import { PwaInstallPrompt } from './PwaInstallPrompt';
 import { CrisisProtocol } from './CrisisProtocol';
+import { DawnTimer } from './DawnTimer';
 
 export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -40,13 +41,14 @@ export const PatientLayout: React.FC = () => {
             <Route path="therapy" element={<PatientTherapy />} />
             <Route path="profile" element={<PatientProfile />} />
             <Route path="crisis" element={<CrisisProtocol />} />
+            <Route path="amanhecer" element={<DawnTimer />} />
           </Routes>
         </div>
 
         <PwaInstallPrompt />
 
         {/* Bottom Navigation */}
-        {location.pathname !== '/app/crisis' && (
+        {location.pathname !== '/app/crisis' && location.pathname !== '/app/amanhecer' && (
            <nav className="absolute inset-x-0 bottom-0 w-full bg-white border-t border-brand-100/50 pb-safe z-50">
              <div className="flex items-center justify-around px-6 pt-3 pb-5">
                <button onClick={() => navigate('/app')} className={getTabClass('/app')}>
