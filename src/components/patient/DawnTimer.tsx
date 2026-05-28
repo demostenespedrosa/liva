@@ -25,23 +25,84 @@ export const DawnTimer: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    let fadeInterval: NodeJS.Timeout;
+    let fadeOutTimeout: NodeJS.Timeout;
+
     if (phase === 'running') {
       if (audioRef.current) {
+        audioRef.current.volume = 0;
         audioRef.current.play().catch(e => console.error("Sem interação prévia para tocar áudio.", e));
+
+        // Fade in progressivo de 0 a 1 em ~3 segundos
+        let volume = 0;
+        fadeInterval = setInterval(() => {
+          volume += 0.05;
+          if (volume >= 1) {
+            volume = 1;
+            clearInterval(fadeInterval);
+          }
+          if (audioRef.current) audioRef.current.volume = volume;
+        }, 150);
       }
+
+      const totalDurationMs = durationMinutes * 60 * 1000;
+      
+      // Agenda o fade out 3 segundos antes do término
+      fadeOutTimeout = setTimeout(() => {
+        if (audioRef.current) {
+          clearInterval(fadeInterval);
+          let volume = audioRef.current.volume;
+          fadeInterval = setInterval(() => {
+            volume -= 0.05;
+            if (volume <= 0) {
+              volume = 0;
+              clearInterval(fadeInterval);
+            }
+            if (audioRef.current) audioRef.current.volume = volume;
+          }, 150);
+        }
+      }, Math.max(0, totalDurationMs - 3000));
 
       const timer = setTimeout(() => {
         setPhase('finished');
         if ('vibrate' in navigator) {
             navigator.vibrate(1000); 
         }
-      }, durationMinutes * 60 * 1000);
+      }, totalDurationMs);
       
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(fadeOutTimeout);
+        clearInterval(fadeInterval);
+      };
     } else {
       if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0; // Reseta a música para o início
+        clearInterval(fadeInterval);
+        let volume = audioRef.current.volume;
+        
+        const stopAudio = () => {
+           if (audioRef.current) {
+             audioRef.current.pause();
+             audioRef.current.currentTime = 0;
+           }
+        };
+
+        if (volume > 0) {
+           // Fade out rápido se cancelou no meio
+           fadeInterval = setInterval(() => {
+              volume -= 0.1;
+              if (volume <= 0) {
+                 volume = 0;
+                 clearInterval(fadeInterval);
+                 stopAudio();
+              }
+              if (audioRef.current) audioRef.current.volume = volume;
+           }, 100);
+        } else {
+           stopAudio();
+        }
+        
+        return () => clearInterval(fadeInterval);
       }
     }
   }, [phase, durationMinutes]);
