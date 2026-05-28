@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, Smile, Frown, Meh, Sun } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -7,11 +7,29 @@ export const DawnTimer: React.FC = () => {
   const navigate = useNavigate();
   const [phase, setPhase] = useState<'setup' | 'running' | 'finished'>('setup');
   const [durationMinutes, setDurationMinutes] = useState(5);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
   const times = [1, 3, 5, 10, 20, 30, 60];
 
   useEffect(() => {
+    // Inicializa o áudio
+    audioRef.current = new Audio('/amanhecer-audio.mp3');
+    audioRef.current.loop = true;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (phase === 'running') {
+      if (audioRef.current) {
+        audioRef.current.play().catch(e => console.error("Sem interação prévia para tocar áudio.", e));
+      }
+
       const timer = setTimeout(() => {
         setPhase('finished');
         if ('vibrate' in navigator) {
@@ -20,6 +38,11 @@ export const DawnTimer: React.FC = () => {
       }, durationMinutes * 60 * 1000);
       
       return () => clearTimeout(timer);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0; // Reseta a música para o início
+      }
     }
   }, [phase, durationMinutes]);
 
